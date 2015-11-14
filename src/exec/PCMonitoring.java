@@ -1,4 +1,4 @@
-package computer;
+package exec;
 
 import java.awt.Dimension;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import lejos.robotics.filter.PublishedSource;
 import lejos.robotics.filter.SubscribedProvider;
 
-public class RobotPublishedSamples extends JFrame {
+public class PCMonitoring extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private static String title = "Robot Published Samples";
 	private String[] fixedColumnNames = {
@@ -30,7 +30,7 @@ public class RobotPublishedSamples extends JFrame {
 	private JTable table;
 	private Object[][] data;
 	
-	public RobotPublishedSamples() throws IOException {
+	public PCMonitoring() throws IOException {
 		super(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -38,7 +38,7 @@ public class RobotPublishedSamples extends JFrame {
 		table = new JTable(data, columnNames);
 		this.getContentPane().add(new JScrollPane(table));
 		
-		setPreferredSize(new Dimension(1000,200));
+		setPreferredSize(new Dimension(1200,400));
 	}
 	
 	public void setData(Collection<PublishedSource> sources) {
@@ -59,13 +59,13 @@ public class RobotPublishedSamples extends JFrame {
 			data[row][5] = source.getFrequency();
 			data[row][6] = source.getTime();
 			
-			String logMsg = " IpAddress: " + source.getIpAddress() + 
+			/*String logMsg = " IpAddress: " + source.getIpAddress() + 
 					" Host: " + source.getHost() + 
 					" Port: " + source.getPort() + 
 					" Name: " + source.getName() + 
 					" Simple Size: " + source.sampleSize() +
 					" Frequency: " + source.getFrequency() + 
-					" Time: " + source.getTime();
+					" Time: " + source.getTime();*/
 			
 			SubscribedProvider provider;
 			try {
@@ -76,15 +76,13 @@ public class RobotPublishedSamples extends JFrame {
 				
 				for(int i=0;i<source.sampleSize();i++) {
 					data[row][fixedColumnNames.length+i] = sample[i];
-					logMsg = logMsg + " Sample[" + i + "]: " + sample[i];
+					//logMsg = logMsg + " Sample[" + i + "]: " + sample[i];
 				}
-				RobotLogger.logMessage(logMsg);
 				source.close();
 			} catch (ConnectException e) {
 				for(int i=0;i<source.sampleSize();i++) {
 					data[row][fixedColumnNames.length+i] = "n/a";
-					logMsg = logMsg + " Sample[" + i + "]: " + "n/a";
-					RobotLogger.logMessage(logMsg);
+					//logMsg = logMsg + " Sample[" + i + "]: " + "n/a";
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -108,17 +106,10 @@ public class RobotPublishedSamples extends JFrame {
 	
 	public static void main(String[] args) throws IOException {
 		
-		RobotLogger.log("STARTING ROBOT PUBLISHED SAMPLES...");
-		RobotLogger.logMessage("STARTING ROBOT PUBLISHED SAMPLES...");
-		
-		RobotPublishedSamples frame = new RobotPublishedSamples();
+		PCMonitoring frame = new PCMonitoring();
 		
 		frame.pack();
 		frame.setVisible(true);
 		frame.run();
-		
-		RobotLogger.log("STOPPING ROBOT PUBLISHED SAMPLES...");
-		RobotLogger.logMessage("STOPPING ROBOT PUBLISHED SAMPLES...");
-		RobotLogger.closeLogs();
 	}
 }
