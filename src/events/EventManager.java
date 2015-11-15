@@ -5,29 +5,31 @@ import java.util.ArrayList;
 import lejos.hardware.Sounds;
 import lejos.hardware.ev3.LocalEV3;
 
+import component.Display;
+
 public class EventManager extends Thread {
 
 	private final static int MAX_ACTIVE_EVENT = 10;
-	private static long totalEvents = 0;
 
 	private static ArrayList<Event> eventQueueList = null;
 	private static ArrayList<Event> eventActiveList = null;
 	private static EventsPublisher eventsPublisher = null;
-
+	private static Display display = null;
+	
 	public EventManager() {
 		super("EventManager");
 		eventQueueList = new ArrayList<Event>();
 		eventActiveList = new ArrayList<Event>();
-		eventsPublisher = new EventsPublisher();
+		EventStatus evtStatus = new EventStatus(EventStatus.Status.START);
+		EventManager.addEvent(evtStatus);
+		eventsPublisher = new EventsPublisher(evtStatus);
+		display = new Display();
 	}
 
 	@Override
 	public void run() {
 		boolean isRunning = true;
-		
-		EventStatus evt = new EventStatus(EventStatus.Status.IDLE);
-		EventManager.addEvent(evt);
-		
+	
 		synchronized (this) {
 			while (isRunning)
 				try {
@@ -63,6 +65,7 @@ public class EventManager extends Thread {
 					eventActiveList.add(nextEvt);
 					eventQueueList.remove(0);
 					eventsPublisher.publishEvent(nextEvt);
+					display.updateDisplay();
 				}
 			}
 		}

@@ -15,9 +15,8 @@ public class EventsPublisher {
 	private EventPublisher evtPubStatus;
 	private boolean isEvtPubStatusInitialised = false;
 
-	public EventsPublisher() {
-		EventStatus evtStatus = new EventStatus(EventStatus.Status.IDLE);
-		evtPubStatus = new EventPublisher(evtStatus, evtStatus.getType().name());
+	public EventsPublisher(Event evt) {
+		evtPubStatus = new EventPublisher(evt, evt.getType().name());
 		try {
 			publishStatus = new PublishFilter(evtPubStatus,
 					evtPubStatus.getName(), TRANSMISSION_FREQUENCY_LOW);

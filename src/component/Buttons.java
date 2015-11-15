@@ -30,5 +30,13 @@ public class Buttons extends Thread {
 			EventStatus evt = new EventStatus(EventStatus.Status.EXIT);
 			EventManager.addEvent(evt);
 		}
+		if (Button.UP.isDown()) {
+			EventStatus evt = new EventStatus(EventStatus.Status.RUNNING);
+			EventManager.addEvent(evt);
+		}
+		if (Button.DOWN.isDown()) {
+			EventStatus evt = new EventStatus(EventStatus.Status.IDLE);
+			EventManager.addEvent(evt);
+		}
 	}
 }

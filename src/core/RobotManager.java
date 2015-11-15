@@ -5,8 +5,8 @@ import behaviours.GoToGoal;
 import behaviours.MonitoringTouch;
 import behaviours.RobotStatus;
 
+import component.Display;
 import components.ColourSensor;
-import components.Display;
 import components.Grabber;
 import components.InfraredSensor;
 import components.MotorController;
