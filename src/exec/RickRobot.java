@@ -3,9 +3,10 @@ package exec;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
+
+import component.Buttons;
+
 import events.EventManager;
-import events.EventRobotStatus;
-import events.Event.Type;
 
 public class RickRobot {
 
@@ -29,39 +30,45 @@ public class RickRobot {
 	 * rightMotor); private Publish publisher = new Publish(infraredSensor,
 	 * colourSensor);
 	 */
-
 	private static EventManager eventManager;
+	private static Buttons buttonsManager;
 
 	private static void startEventManager() {
 		eventManager = new EventManager();
 		eventManager.start();
+	}
 
-		try {
-			EventRobotStatus evt = new EventRobotStatus(
-					EventRobotStatus.Status.RUNNING, "Starting Robot");
-			eventManager.addEvent(evt);
-			Thread.sleep(5000);
-			synchronized (eventManager) {
-				eventManager.notify();
+	private static void startButtons() {
+		buttonsManager = new Buttons();
+		buttonsManager.start();
+	}
+	
+	public static void processMission() {
+		synchronized (eventManager) {
+			eventManager.notify();
+		}
+		synchronized (buttonsManager) {
+			buttonsManager.notify();
+		}
+	}	
+	
+	public static void main(String[] args) {
+		boolean isRunning = true;
+		int period = 1000;
+		
+		startEventManager();
+		startButtons();
+		
+		while (isRunning) {
+			
+			processMission();
+			
+			try {
+				Thread.sleep(period);
+			} catch (InterruptedException e) {
+				isRunning = false;
 			}
-			evt = new EventRobotStatus(
-					EventRobotStatus.Status.STOPPED, "Stop Robot");
-			eventManager.addEvent(evt);
-			Thread.sleep(5000);
-			synchronized (eventManager) {
-				eventManager.notify();
-			}
-			Thread.sleep(5000);
-			synchronized (eventManager) {
-				eventManager.interrupt();
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
-	public static void main(String[] args) {
-		startEventManager();
-	}
 }

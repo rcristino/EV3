@@ -16,8 +16,6 @@ public interface IEvent {
 
 	public abstract Date getTimeStamp();
 
-	public abstract String getInfo();
-
 	public abstract int hashCode();
 
 	public abstract boolean equals(Object obj);

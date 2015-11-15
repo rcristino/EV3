@@ -15,12 +15,10 @@ public class Event implements IEvent {
 	private Type eventType;
 	private long eventId = -1;
 	private Date timeStamp;
-	private String info = "Event";
 	
 	
-	public Event(Type type, String info) {
+	public Event(Type type) {
 		this.eventId = Event.generateEventId(); 
-		this.info = info;
 		this.timeStamp = new Date();
 		this.eventType = type;
 	}
@@ -54,10 +52,6 @@ public class Event implements IEvent {
 		return timeStamp;
 	}
 	
-	public final String getInfo() {
-		return info;
-	}
-
 	/* (non-Javadoc)
 	 * @see events.IEvent#hashCode()
 	 */
@@ -66,7 +60,6 @@ public class Event implements IEvent {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (eventId ^ (eventId >>> 32));
-		result = prime * result + ((info == null) ? 0 : info.hashCode());
 		result = prime * result
 				+ ((timeStamp == null) ? 0 : timeStamp.hashCode());
 		return result;
@@ -86,11 +79,6 @@ public class Event implements IEvent {
 		Event other = (Event) obj;
 		if (eventId != other.eventId)
 			return false;
-		if (info == null) {
-			if (other.info != null)
-				return false;
-		} else if (!info.equals(other.info))
-			return false;
 		if (timeStamp == null) {
 			if (other.timeStamp != null)
 				return false;
@@ -105,7 +93,7 @@ public class Event implements IEvent {
 	@Override
 	public String toString() {
 		return "Event [eventId=" + eventId + ", timeStamp=" + timeStamp
-				+ ", info=" + info + ", active=" + isActive + "]";
+				+ ", active=" + isActive + "]";
 	}
 
     

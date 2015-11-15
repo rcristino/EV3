@@ -38,7 +38,7 @@ public class PCMonitoring extends JFrame {
 		table = new JTable(data, columnNames);
 		this.getContentPane().add(new JScrollPane(table));
 		
-		setPreferredSize(new Dimension(1200,400));
+		setPreferredSize(new Dimension(1000,200));
 	}
 	
 	public void setData(Collection<PublishedSource> sources) {

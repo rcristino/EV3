@@ -12,57 +12,89 @@ public class EventsPublisher {
 
 	private PublishFilter publishStatus;
 	private float[] sampleStatus;
-	private EventPublisherStatus evtPubStatus;
+	private EventPublisher evtPubStatus;
+	private boolean isEvtPubStatusInitialised = false;
 
-	public EventsPublisher(){
-		
+	public EventsPublisher() {
+		EventStatus evtStatus = new EventStatus(EventStatus.Status.IDLE);
+		evtPubStatus = new EventPublisher(evtStatus, evtStatus.getType().name());
+		try {
+			publishStatus = new PublishFilter(evtPubStatus,
+					evtPubStatus.getName(), TRANSMISSION_FREQUENCY_LOW);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		sampleStatus = new float[publishStatus.sampleSize()];
+		isEvtPubStatusInitialised = true;
 	}
-	
+
 	public void publishEvent(IEvent evt) {
 		switch (evt.getType()) {
 		case STATUS:
-			publishEventStatus((EventRobotStatus)evt);
+			publishEventStatus((EventStatus) evt);
 			break;
 
 		default:
 			break;
 		}
 	}
-	
-	private void publishEventStatus(EventRobotStatus evtStatus) {
-		try {
 
-			evtPubStatus = new EventPublisherStatus(evtStatus);
-			publishStatus = new PublishFilter(evtPubStatus,
-					evtPubStatus.getName(), TRANSMISSION_FREQUENCY_LOW);
-			sampleStatus = new float[publishStatus.sampleSize()];
+	private void publishEventStatus(EventStatus evtStatus) {
+
+		if (isEvtPubStatusInitialised) {
+			evtPubStatus.updateEvent(evtStatus);
 			publishStatus.fetchSample(sampleStatus, 0);
-		} catch (IOException e) {
-
 		}
 	}
 
-	private class EventPublisherStatus implements SensorMode {
+	private class EventPublisher implements SensorMode {
 
-		private EventRobotStatus evt;
+		private IEvent evt;
+		private int numSample = 1;
+		private String name = "UNKNOWN";
 
-		public EventPublisherStatus(EventRobotStatus evt) {
+		public EventPublisher(IEvent evt, String reference) {
 			this.evt = evt;
+			this.name = reference;
+			switch (evt.getType()) {
+			case STATUS:
+				numSample = 1;
+				break;
+
+			default:
+				numSample = 1;
+				break;
+			}
+		}
+
+		public void updateEvent(IEvent newEvt) {
+			this.evt = newEvt;
 		}
 
 		@Override
 		public int sampleSize() {
-			return 1;
+			return numSample;
 		}
 
 		@Override
 		public void fetchSample(float[] sample, int offset) {
-			sample[0] = (float) new Float(evt.getStatus().ordinal()).floatValue();
+			switch (evt.getType()) {
+			case STATUS:
+				sample[0] = (float) new Float(((EventStatus) evt).getStatus()
+						.ordinal()).floatValue();
+				break;
+
+			default:
+				sample[0] = -1;
+				break;
+			}
+
 		}
 
 		@Override
 		public String getName() {
-			return "(" + evt.getId() + ") " + evt.getType().name() + ": " + evt.getStatus().name();
+			return name;
 		}
+
 	}
 }
