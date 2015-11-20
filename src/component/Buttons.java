@@ -1,6 +1,7 @@
 package component;
 
 import lejos.hardware.Button;
+import events.EventGrabber;
 import events.EventManager;
 import events.EventStatus;
 
@@ -36,6 +37,12 @@ public class Buttons extends Thread {
 		}
 		if (Button.DOWN.isDown()) {
 			EventStatus evt = new EventStatus(EventStatus.Status.IDLE);
+			EventManager.addEvent(evt);
+		}
+
+		if (Button.ENTER.isDown()) {
+			EventGrabber evt = new EventGrabber(
+					EventGrabber.GrabberStatus.ACTION);
 			EventManager.addEvent(evt);
 		}
 	}

@@ -11,11 +11,9 @@ import events.EventStatus;
 public class Display {
 
 	private static enum Row {
-		BATTERY,
-		VOLTAGE,
-		STATUS,
-		POSITION
+		BATTERY, VOLTAGE, STATUS, POSITION
 	}
+
 	public Display() {
 	}
 
@@ -28,21 +26,23 @@ public class Display {
 
 		EventStatus evtStatus = (EventStatus) EventManager
 				.getEventActive(Event.Type.STATUS);
+		if (evtStatus != null) {
+			String batteryTxt = new String("Battery: "
+					+ String.format("%.5g", LocalEV3.get().getPower()
+							.getBatteryCurrent()));
+			String voltageTxt = new String("Voltage: "
+					+ String.format("%.5g", LocalEV3.get().getPower()
+							.getVoltage()));
+			String statusTxt = new String("Status: "
+					+ evtStatus.getStatus().name());
+			String positionTxt = new String("X: " + poxX + " Y: " + poxY);
 
-		String batteryTxt = new String("Battery: "
-				+ String.format("%.5g", LocalEV3.get().getPower()
-						.getBatteryCurrent()));
-		String voltageTxt = new String("Voltage: "
-				+ String.format("%.5g", LocalEV3.get().getPower().getVoltage()));
-		String statusTxt = new String("Status: " + evtStatus.getStatus().name());
-		String positionTxt = new String("X: " + poxX + " Y: " + poxY);
-
-		LCD.clear();
-		LCD.drawString(batteryTxt, 0, Display.Row.BATTERY.ordinal());
-		LCD.drawString(voltageTxt, 0, Display.Row.VOLTAGE.ordinal());
-		LCD.drawString(statusTxt, 0, Display.Row.STATUS.ordinal());
-		LCD.drawString(positionTxt, 0, Display.Row.POSITION.ordinal());
-		LCD.refresh();
-
+			LCD.clear();
+			LCD.drawString(batteryTxt, 0, Display.Row.BATTERY.ordinal());
+			LCD.drawString(voltageTxt, 0, Display.Row.VOLTAGE.ordinal());
+			LCD.drawString(statusTxt, 0, Display.Row.STATUS.ordinal());
+			LCD.drawString(positionTxt, 0, Display.Row.POSITION.ordinal());
+			LCD.refresh();
+		}
 	}
 }

@@ -10,7 +10,9 @@ public class EventStatus extends Event implements IEvent {
 		IDLE, 
 		EXIT, 
 		RUNNING, 
-		MOVING
+		MOVING,
+		GRABER_OPENED,
+		GRABER_CLOSED
 	}
 
 	private Status status;
@@ -66,6 +68,15 @@ public class EventStatus extends Event implements IEvent {
 			this.setLED(2);
 			this.setActive(false);
 			break;
+		case GRABER_CLOSED:
+			EventManager.addEvent(new EventGrabber(EventGrabber.GrabberStatus.CLOSED));
+			this.setActive(false);
+			break;
+		case GRABER_OPENED:
+			EventManager.addEvent(new EventGrabber(EventGrabber.GrabberStatus.OPENED));
+			this.setActive(false);
+			break;
+			
 		default:
 			EventManager.addEvent(new EventStatus(EventStatus.Status.EXIT));
 			break;

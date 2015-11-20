@@ -10,12 +10,12 @@ import events.EventManager;
 
 public class RickRobot {
 
-	private final static Port TOUCH_SENSOR = SensorPort.S3;
-	private final static Port INFRARED_SENSOR = SensorPort.S2;
-	private final static Port COLOUR_SENSOR = SensorPort.S1;
-	private final static Port MOTOR_LEFT = MotorPort.A;
-	private final static Port MOTOR_RIGHT = MotorPort.B;
-	private final static Port MOTOR_GRABBER = MotorPort.C;
+	public final static Port TOUCH_SENSOR_PORT = SensorPort.S3;
+	public final static Port INFRARED_SENSOR_PORT  = SensorPort.S2;
+	public final static Port COLOUR_SENSOR_PORT  = SensorPort.S1;
+	public final static Port MOTOR_LEFT_PORT  = MotorPort.A;
+	public final static Port MOTOR_RIGHT_PORT  = MotorPort.B;
+	public final static Port MOTOR_GRABBER_PORT  = MotorPort.C;
 
 	/*
 	 * private Display display = new Display(); private TouchSensor touchSensor
