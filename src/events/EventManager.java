@@ -88,8 +88,6 @@ public class EventManager extends Thread {
 			eventActiveList = new ArrayList<>();
 		}
 		eventQueueList.add(evt);
-		
-		LocalEV3.get().getAudio().systemSound(Sounds.BEEP);
 	}
 
 	public void remvoveEvent(Event evt) {
