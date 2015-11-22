@@ -5,6 +5,7 @@ import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 
 import component.Buttons;
+import component.ColourDetector;
 import component.Touch;
 
 import events.EventManager;
@@ -18,23 +19,11 @@ public class RickRobot {
 	public final static Port MOTOR_RIGHT_PORT  = MotorPort.B;
 	public final static Port MOTOR_GRABBER_PORT  = MotorPort.C;
 
-	/*
-	 * private Display display = new Display(); private TouchSensor touchSensor
-	 * = new TouchSensor(TOUCH_SENSOR); private ColourSensor colourSensor = new
-	 * ColourSensor(COLOUR_SENSOR); private InfraredSensor infraredSensor = new
-	 * InfraredSensor(INFRARED_SENSOR); private MonitoringTouch monitoringTouch
-	 * = new MonitoringTouch(touchSensor); private MotorController leftMotor =
-	 * new MotorController(MOTOR_LEFT); private MotorController rightMotor = new
-	 * MotorController(MOTOR_RIGHT); private Grabber grabber = new
-	 * Grabber(MOTOR_GRABBER); //private static Navi navi = new Navi(leftMotor,
-	 * rightMotor); private GoToGoal gotogoal = new GoToGoal(leftMotor,
-	 * rightMotor); private Publish publisher = new Publish(infraredSensor,
-	 * colourSensor);
-	 */
 	private static EventManager eventManager;
 	private static Buttons buttonsManager;
 	private static Touch touchManager;
-
+	private static ColourDetector colourManager;
+	
 	private static void startEventManager() {
 		eventManager = new EventManager();
 		eventManager.start();
@@ -50,6 +39,10 @@ public class RickRobot {
 		touchManager.start();
 	}
 	
+	private static void startColourDetector() {
+		colourManager = new ColourDetector();
+		colourManager.start();
+	}
 	
 	public static void processMission() {
 		synchronized (eventManager) {
@@ -61,6 +54,9 @@ public class RickRobot {
 		synchronized (touchManager) {
 			touchManager.notify();
 		}
+		synchronized (colourManager) {
+			colourManager.notify();
+		}
 	}	
 	
 	public static void main(String[] args) {
@@ -70,6 +66,7 @@ public class RickRobot {
 		startEventManager();
 		startButtons();
 		startTouch();
+		startColourDetector();
 		
 		while (isRunning) {
 			
