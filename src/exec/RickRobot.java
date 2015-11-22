@@ -5,6 +5,7 @@ import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 
 import component.Buttons;
+import component.Touch;
 
 import events.EventManager;
 
@@ -32,6 +33,7 @@ public class RickRobot {
 	 */
 	private static EventManager eventManager;
 	private static Buttons buttonsManager;
+	private static Touch touchManager;
 
 	private static void startEventManager() {
 		eventManager = new EventManager();
@@ -43,12 +45,21 @@ public class RickRobot {
 		buttonsManager.start();
 	}
 	
+	private static void startTouch() {
+		touchManager = new Touch();
+		touchManager.start();
+	}
+	
+	
 	public static void processMission() {
 		synchronized (eventManager) {
 			eventManager.notify();
 		}
 		synchronized (buttonsManager) {
 			buttonsManager.notify();
+		}
+		synchronized (touchManager) {
+			touchManager.notify();
 		}
 	}	
 	
@@ -58,6 +69,7 @@ public class RickRobot {
 		
 		startEventManager();
 		startButtons();
+		startTouch();
 		
 		while (isRunning) {
 			

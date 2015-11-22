@@ -6,7 +6,7 @@ import exec.RickRobot;
 public class EventGrabber extends Event implements IEvent {
 
 	public static enum GrabberStatus {
-		OPENED, CLOSED, ACTION, STOP
+		OPENED, CLOSED, ACTION
 	}
 
 	private static int DEFAULT_DEGREES = 80;
@@ -39,32 +39,26 @@ public class EventGrabber extends Event implements IEvent {
 		switch (this.getGrabberStatus()) {
 		case OPENED:
 			if (currentStatus == GrabberStatus.CLOSED) {
-				grabberMotor.resetTachoCount();
-				grabberMotor.rotate(DEFAULT_DEGREES);
+				grabberMotor.rotateTo(0);
 				currentStatus = GrabberStatus.OPENED;
 			}
 			this.setActive(false);
 			break;
 		case CLOSED:
 			if (currentStatus == GrabberStatus.OPENED) {
-				grabberMotor.resetTachoCount();
-				grabberMotor.rotate(DEFAULT_DEGREES * -1);
+				grabberMotor.rotateTo(DEFAULT_DEGREES);
 				currentStatus = GrabberStatus.CLOSED;
 			}
 			this.setActive(false);
 			break;
 		case ACTION:
 			if (currentStatus == GrabberStatus.OPENED) {
-				EventManager.addEvent(new EventStatus(EventStatus.Status.GRABER_CLOSED));
+				EventManager.addEvent(new EventStatus(
+						EventStatus.Status.GRABER_CLOSED));
 			} else {
-				EventManager.addEvent(new EventStatus(EventStatus.Status.GRABER_OPENED));
+				EventManager.addEvent(new EventStatus(
+						EventStatus.Status.GRABER_OPENED));
 			}
-			this.setActive(false);
-			break;
-		case STOP:
-			grabberMotor.stop();
-			grabberMotor.resetTachoCount();
-			currentStatus = EventGrabber.GrabberStatus.OPENED;
 			this.setActive(false);
 			break;
 		default:

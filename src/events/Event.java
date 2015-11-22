@@ -8,7 +8,8 @@ public class Event implements IEvent {
 	public static enum Type {
 		STATUS,
 		POSITION, 
-		GRABBER
+		GRABBER, 
+		TOUCH
 	}
 	
 	private static long totalIds = 0;
