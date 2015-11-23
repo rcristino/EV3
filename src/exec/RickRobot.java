@@ -6,6 +6,7 @@ import lejos.hardware.port.SensorPort;
 
 import component.Buttons;
 import component.ColourDetector;
+import component.InfraredSensor;
 import component.Touch;
 
 import events.EventManager;
@@ -23,7 +24,8 @@ public class RickRobot {
 	private static Buttons buttonsManager;
 	private static Touch touchManager;
 	private static ColourDetector colourManager;
-
+	private static InfraredSensor infraredManager;
+	
 	private static void startEventManager() {
 		eventManager = new EventManager();
 		eventManager.start();
@@ -44,6 +46,11 @@ public class RickRobot {
 		colourManager.start();
 	}
 
+	private static void startInfraredDetector() {
+		infraredManager = new InfraredSensor();
+		infraredManager.start();
+	}
+	
 	public static void processMission() {
 		synchronized (eventManager) {
 			eventManager.notify();
@@ -58,6 +65,9 @@ public class RickRobot {
 		synchronized (colourManager) {
 			colourManager.notify();
 		}
+		synchronized (infraredManager) {
+			infraredManager.notify();
+		}
 	}
 
 	public static void main(String[] args) {
@@ -68,7 +78,8 @@ public class RickRobot {
 		startButtons();
 		startTouch();
 		startColourDetector();
-
+		startInfraredDetector();
+		
 		while (isRunning) {
 
 			processMission();
