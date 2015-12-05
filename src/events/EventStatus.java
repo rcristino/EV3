@@ -1,18 +1,13 @@
 package events;
 
+import behaviour.MoveManager;
 import lejos.hardware.Sounds;
 import lejos.hardware.ev3.LocalEV3;
 
 public class EventStatus extends Event implements IEvent {
 
 	public static enum Status {
-		START, 
-		IDLE, 
-		EXIT, 
-		RUNNING, 
-		MOVING,
-		GRABER_OPENED,
-		GRABER_CLOSED
+		START, IDLE, EXIT, MOVE, GRABER_OPENED, GRABER_CLOSED
 	}
 
 	private Status status;
@@ -27,18 +22,16 @@ public class EventStatus extends Event implements IEvent {
 	}
 
 	/**
-	 *LED pattern
-	 *0: turn off button lights
-	 *1/2/3: static light green/red/yellow
-	 *4/5/6: normal blinking light green/red/yellow
-	 *7/8/9: fast blinking light green/red/yellow
-	 *>9: same as 9.
+	 * LED pattern 0: turn off button lights 1/2/3: static light
+	 * green/red/yellow 4/5/6: normal blinking light green/red/yellow 7/8/9:
+	 * fast blinking light green/red/yellow >9: same as 9.
+	 * 
 	 * @param pattern
 	 */
-	private void setLED(int pattern){
+	private void setLED(int pattern) {
 		LocalEV3.get().getLED().setPattern(pattern);
 	}
-	
+
 	@Override
 	public void execute() {
 		super.execute();
@@ -51,6 +44,7 @@ public class EventStatus extends Event implements IEvent {
 			break;
 		case IDLE:
 			this.setLED(1);
+			EventManager.addEvent(new EventMove(EventMove.Action.STOP));
 			this.setActive(false);
 			break;
 		case EXIT:
@@ -64,19 +58,22 @@ public class EventStatus extends Event implements IEvent {
 				thread.interrupt();
 			}
 			break;
-		case RUNNING:
+		case MOVE:
 			this.setLED(2);
+			EventManager.addEvent(new EventMove());
 			this.setActive(false);
 			break;
 		case GRABER_CLOSED:
-			EventManager.addEvent(new EventGrabber(EventGrabber.GrabberStatus.CLOSED));
+			EventManager.addEvent(new EventGrabber(
+					EventGrabber.GrabberStatus.CLOSED));
 			this.setActive(false);
 			break;
 		case GRABER_OPENED:
-			EventManager.addEvent(new EventGrabber(EventGrabber.GrabberStatus.OPENED));
+			EventManager.addEvent(new EventGrabber(
+					EventGrabber.GrabberStatus.OPENED));
 			this.setActive(false);
 			break;
-			
+
 		default:
 			EventManager.addEvent(new EventStatus(EventStatus.Status.EXIT));
 			break;

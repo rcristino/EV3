@@ -7,6 +7,10 @@ import events.EventStatus;
 
 public class Buttons extends Thread {
 
+	public Buttons() {
+		super("Buttons");
+	}
+	
 	@Override
 	public void run() {
 		boolean isRunning = true;
@@ -32,7 +36,7 @@ public class Buttons extends Thread {
 			EventManager.addEvent(evt);
 		}
 		if (Button.UP.isDown()) {
-			EventStatus evt = new EventStatus(EventStatus.Status.RUNNING);
+			EventStatus evt = new EventStatus(EventStatus.Status.MOVE);
 			EventManager.addEvent(evt);
 		}
 		if (Button.DOWN.isDown()) {

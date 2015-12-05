@@ -10,6 +10,10 @@ public class Touch extends Thread {
 	private static int NUM_SAMPLES = 10;
 	private static EV3TouchSensor touch = null;
 
+	public Touch() {
+		super("Touch");
+	}
+	
 	@Override
 	public void run() {
 		boolean isRunning = true;

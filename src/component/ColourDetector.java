@@ -10,6 +10,10 @@ public class ColourDetector extends Thread {
 	private static int NUM_SAMPLES = 10;
 	private static EV3ColorSensor colourDetector = null;
 
+	public ColourDetector() {
+		super("ColourDetector");
+	}
+	
 	@Override
 	public void run() {
 		boolean isRunning = true;
@@ -29,7 +33,6 @@ public class ColourDetector extends Thread {
 					e.printStackTrace();
 				}
 		}
-
 	}
 
 	/**

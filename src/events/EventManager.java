@@ -2,11 +2,6 @@ package events;
 
 import java.util.ArrayList;
 
-import lejos.hardware.Sounds;
-import lejos.hardware.ev3.LocalEV3;
-
-import component.Display;
-
 public class EventManager extends Thread {
 
 	private final static int MAX_ACTIVE_EVENT = 10;
@@ -14,8 +9,7 @@ public class EventManager extends Thread {
 	private static ArrayList<Event> eventQueueList = null;
 	private static ArrayList<Event> eventActiveList = null;
 	private static EventsPublisher eventsPublisher = null;
-	private static Display display = null;
-	
+
 	public EventManager() {
 		super("EventManager");
 		eventQueueList = new ArrayList<Event>();
@@ -23,20 +17,19 @@ public class EventManager extends Thread {
 		EventStatus evtStatus = new EventStatus(EventStatus.Status.START);
 		EventManager.addEvent(evtStatus);
 		eventsPublisher = new EventsPublisher(evtStatus);
-		display = new Display();
 	}
 
 	@Override
 	public void run() {
 		boolean isRunning = true;
-	
+
 		synchronized (this) {
 			while (isRunning)
 				try {
-					
+
 					this.wait();
 					processEvents();
-					
+
 				} catch (InterruptedException e) {
 					isRunning = false;
 				} catch (Exception e) {
@@ -65,13 +58,12 @@ public class EventManager extends Thread {
 					eventActiveList.add(nextEvt);
 					eventQueueList.remove(0);
 					eventsPublisher.publishEvent(nextEvt);
-					display.updateDisplay();
 				}
 			}
 		}
 	}
 
-	public static Event getEventActive(Event.Type type){
+	public static Event getEventActive(Event.Type type) {
 		Event result = null;
 		for (Event evtActive : eventActiveList) {
 			if (evtActive.getType() == type) {
@@ -81,7 +73,7 @@ public class EventManager extends Thread {
 		}
 		return result;
 	}
-	
+
 	public static void addEvent(Event evt) {
 		if (eventQueueList == null) {
 			eventQueueList = new ArrayList<>();
@@ -94,7 +86,7 @@ public class EventManager extends Thread {
 		evt.setActive(false);
 		if (eventQueueList != null) {
 			eventQueueList.remove(evt);
-			if (eventActiveList.contains(evt)){
+			if (eventActiveList.contains(evt)) {
 				eventActiveList.remove(evt);
 			}
 		}

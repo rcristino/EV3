@@ -9,7 +9,8 @@ public class Event implements IEvent {
 		STATUS,
 		POSITION, 
 		GRABBER, 
-		TOUCH
+		TOUCH,
+		MOVE
 	}
 	
 	private static long totalIds = 0;

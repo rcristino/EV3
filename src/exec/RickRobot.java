@@ -3,9 +3,11 @@ package exec;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
+import behaviour.MoveManager;
 
 import component.Buttons;
 import component.ColourDetector;
+import component.Display;
 import component.InfraredSensor;
 import component.Touch;
 
@@ -19,38 +21,46 @@ public class RickRobot {
 	public final static Port MOTOR_LEFT_PORT = MotorPort.A;
 	public final static Port MOTOR_RIGHT_PORT = MotorPort.B;
 	public final static Port MOTOR_GRABBER_PORT = MotorPort.C;
+	public final static double WHEEL_RADIUS = 16; /* mm */
+	public final static int TRAVEL_SPEED = 20;
+	public final static int ROTATE_SPEED = 30;
+	public final static int TRACK_WITH = 100;
+	public final static int PLAY_GROUND_SIZE = 100; /* mm */
+	public final static int NUMBER_PATH_POINTS = 3;
+	public final static int CLOCK = 1000;
 
 	private static EventManager eventManager;
 	private static Buttons buttonsManager;
 	private static Touch touchManager;
 	private static ColourDetector colourManager;
 	private static InfraredSensor infraredManager;
-	
-	private static void startEventManager() {
+	private static MoveManager moveManager;
+	private static Display display;
+
+	private static void startThreads() {
+
 		eventManager = new EventManager();
 		eventManager.start();
-	}
 
-	private static void startButtons() {
 		buttonsManager = new Buttons();
 		buttonsManager.start();
-	}
 
-	private static void startTouch() {
 		touchManager = new Touch();
 		touchManager.start();
-	}
 
-	private static void startColourDetector() {
 		colourManager = new ColourDetector();
 		colourManager.start();
-	}
 
-	private static void startInfraredDetector() {
 		infraredManager = new InfraredSensor();
 		infraredManager.start();
+
+		moveManager = new MoveManager();
+		moveManager.start();
+
+		display = new Display();
+		display.start();
 	}
-	
+
 	public static void processMission() {
 		synchronized (eventManager) {
 			eventManager.notify();
@@ -68,24 +78,25 @@ public class RickRobot {
 		synchronized (infraredManager) {
 			infraredManager.notify();
 		}
+		synchronized (moveManager) {
+			moveManager.notify();
+		}
+		synchronized (display) {
+			display.notify();
+		}
 	}
 
 	public static void main(String[] args) {
 		boolean isRunning = true;
-		int period = 1000;
 
-		startEventManager();
-		startButtons();
-		startTouch();
-		startColourDetector();
-		startInfraredDetector();
-		
+		startThreads();
+
 		while (isRunning) {
 
 			processMission();
 
 			try {
-				Thread.sleep(period);
+				Thread.sleep(CLOCK);
 			} catch (InterruptedException e) {
 				isRunning = false;
 			}
