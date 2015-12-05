@@ -2,6 +2,8 @@ package component;
 
 import java.text.DecimalFormat;
 
+import component.InfraredSensor.Range;
+
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.LCD;
 import behaviour.MoveManager;
@@ -12,7 +14,7 @@ import events.EventStatus;
 public class Display extends Thread {
 
 	private static enum Row {
-		BATTERY, VOLTAGE, STATUS, POSITION, SENSORS
+		BATTERY, VOLTAGE, STATUS, POSITION, RANGE
 	}
 
 	private String status = "UNKOWN";
@@ -62,14 +64,33 @@ public class Display extends Thread {
 				+ String.format("%.5g", LocalEV3.get().getPower().getVoltage()));
 		String statusTxt = new String("Status: " + status);
 		String positionTxt = new String(posX + ":" + posY + ":" + posH);
-		String sensorsTxt = new String("RANGE: " + Integer.toString(InfraredSensor.getRage()));
+		InfraredSensor.Range range = InfraredSensor.getRage();
+		String rangeTxt = new String("RANGE: ");
+		switch (range) {
 
+		case SHORT:
+			rangeTxt = rangeTxt + "[|       ]";
+			break;
+		case MEDIUM:
+			rangeTxt = rangeTxt + "[   |     ]";
+			break;
+		case LONG:
+			rangeTxt = rangeTxt + "[      |  ]";
+			break;
+		case UNKNOWN:
+			rangeTxt = rangeTxt + "[        |]";
+			break;
+		default:
+			rangeTxt = rangeTxt + "[        |]";
+			break;
+		}
+		
 		LCD.clear();
 		LCD.drawString(batteryTxt, 0, Display.Row.BATTERY.ordinal());
 		LCD.drawString(voltageTxt, 0, Display.Row.VOLTAGE.ordinal());
 		LCD.drawString(statusTxt, 0, Display.Row.STATUS.ordinal());
 		LCD.drawString(positionTxt, 0, Display.Row.POSITION.ordinal());
-		LCD.drawString(sensorsTxt, 0, Display.Row.SENSORS.ordinal());
+		LCD.drawString(rangeTxt, 0, Display.Row.RANGE.ordinal());
 		LCD.refresh();
 
 	}

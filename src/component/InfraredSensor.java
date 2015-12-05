@@ -7,22 +7,26 @@ import exec.RickRobot;
 
 public class InfraredSensor extends Thread {
 
+	public static enum Range {
+		 UNKNOWN, SHORT, MEDIUM, LONG
+	}
+
+	
 	private static int NUM_SAMPLES = 10;
 	private static EV3IRSensor irs = null;
 	private static int SHORT_RANGE = 10;
 	private static int MEDIUM_RANGE = 25;
 	private static int LONG_RANGE = 50;
-	private static int UNKNOWN_RANGE = 100;
-    private static int currentRange;
-    
+	private static Range currentRange = Range.UNKNOWN;
+
 	public InfraredSensor() {
 		super("InfraredSensor");
 	}
-	
-	public static int getRage(){
+
+	public static Range getRage() {
 		return currentRange;
 	}
-	
+
 	@Override
 	public void run() {
 		boolean isRunning = true;
@@ -43,32 +47,32 @@ public class InfraredSensor extends Thread {
 					e.printStackTrace();
 				}
 		}
-
 	}
 
 	public void processIRS() {
 		float[] sample = new float[NUM_SAMPLES];
 		int offset = 0;
-		currentRange = UNKNOWN_RANGE;
+
 		irs.getDistanceMode().fetchSample(sample, offset);
-		for (float f : sample) {
+
+		for (int i = 0; i < sample.length; i++) {
+			float f = sample[i];
+
 			if (f != 0) {
 
 				if (f <= SHORT_RANGE) {
 					LocalEV3.get().getAudio().systemSound(Sounds.BUZZ);
-					currentRange = SHORT_RANGE;
-					break;
+					currentRange = Range.SHORT;
 				} else if (f <= MEDIUM_RANGE) {
 					LocalEV3.get().getAudio().systemSound(Sounds.DOUBLE_BEEP);
-					currentRange = MEDIUM_RANGE;
-					break;
+					currentRange = Range.MEDIUM;
 				} else if (f <= LONG_RANGE) {
 					LocalEV3.get().getAudio().systemSound(Sounds.BEEP);
-					currentRange = LONG_RANGE;
-					break;
+					currentRange = Range.LONG;
+				} else if (f <= Float.POSITIVE_INFINITY) {
+					currentRange = Range.UNKNOWN;
 				}
 			}
 		}
 	}
-
 }
