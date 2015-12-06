@@ -2,8 +2,6 @@ package component;
 
 import java.text.DecimalFormat;
 
-import component.InfraredSensor.Range;
-
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.LCD;
 import behaviour.MoveManager;
@@ -42,8 +40,8 @@ public class Display extends Thread {
 		}
 	}
 
-	public synchronized void updateDisplay() {
-		DecimalFormat df = new DecimalFormat("#.##");
+	private void updateDisplay() {
+		DecimalFormat df = new DecimalFormat("#.#");
 		double posX = Double.valueOf(df
 				.format(MoveManager.GetPosition().getX()));
 		double posY = Double.valueOf(df
@@ -84,7 +82,7 @@ public class Display extends Thread {
 			rangeTxt = rangeTxt + "[        |]";
 			break;
 		}
-		
+
 		LCD.clear();
 		LCD.drawString(batteryTxt, 0, Display.Row.BATTERY.ordinal());
 		LCD.drawString(voltageTxt, 0, Display.Row.VOLTAGE.ordinal());

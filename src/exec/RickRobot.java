@@ -39,6 +39,9 @@ public class RickRobot {
 
 	private static void startThreads() {
 
+		display = new Display();
+		display.start();
+		
 		eventManager = new EventManager();
 		eventManager.start();
 
@@ -56,9 +59,6 @@ public class RickRobot {
 
 		moveManager = new MoveManager();
 		moveManager.start();
-
-		display = new Display();
-		display.start();
 	}
 
 	public static void processMission() {

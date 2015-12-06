@@ -1,6 +1,5 @@
 package events;
 
-import behaviour.MoveManager;
 import lejos.hardware.Sounds;
 import lejos.hardware.ev3.LocalEV3;
 
@@ -21,35 +20,21 @@ public class EventStatus extends Event implements IEvent {
 		return this.status;
 	}
 
-	/**
-	 * LED pattern 0: turn off button lights 1/2/3: static light
-	 * green/red/yellow 4/5/6: normal blinking light green/red/yellow 7/8/9:
-	 * fast blinking light green/red/yellow >9: same as 9.
-	 * 
-	 * @param pattern
-	 */
-	private void setLED(int pattern) {
-		LocalEV3.get().getLED().setPattern(pattern);
-	}
-
 	@Override
 	public void execute() {
 		super.execute();
 		switch (this.getStatus()) {
 		case START:
 			LocalEV3.get().getAudio().systemSound(Sounds.ASCENDING);
-			this.setLED(1);
 			EventManager.addEvent(new EventStatus(EventStatus.Status.IDLE));
 			this.setActive(false);
 			break;
 		case IDLE:
-			this.setLED(1);
-			EventManager.addEvent(new EventMove(EventMove.Action.STOP));
+
 			this.setActive(false);
 			break;
 		case EXIT:
 			LocalEV3.get().getAudio().systemSound(Sounds.DESCENDING);
-			this.setLED(8);
 			this.setActive(false);
 			int numThreads = Thread.activeCount();
 			Thread[] tarray = new Thread[numThreads];
@@ -59,7 +44,6 @@ public class EventStatus extends Event implements IEvent {
 			}
 			break;
 		case MOVE:
-			this.setLED(2);
 			EventManager.addEvent(new EventMove());
 			this.setActive(false);
 			break;
@@ -78,12 +62,6 @@ public class EventStatus extends Event implements IEvent {
 			EventManager.addEvent(new EventStatus(EventStatus.Status.EXIT));
 			break;
 		}
-
-	}
-
-	@Override
-	public void setActive(boolean active) {
-		super.setActive(active);
 	}
 
 	@Override

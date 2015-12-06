@@ -1,5 +1,6 @@
 package behaviour;
 
+import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
@@ -23,8 +24,8 @@ public class MoveManager extends Thread {
 		leftMotor = new EV3LargeRegulatedMotor(RickRobot.MOTOR_LEFT_PORT);
 		righMotor = new EV3LargeRegulatedMotor(RickRobot.MOTOR_RIGHT_PORT);
 		pilot = new DifferentialPilot(RickRobot.WHEEL_RADIUS * 2,
-				RickRobot.WHEEL_RADIUS * 2, RickRobot.TRACK_WITH,
-				leftMotor, righMotor, isReverse);
+				RickRobot.WHEEL_RADIUS * 2, RickRobot.TRACK_WITH, leftMotor,
+				righMotor, isReverse);
 		pilot.setTravelSpeed(RickRobot.TRAVEL_SPEED);
 		pilot.setRotateSpeed(RickRobot.ROTATE_SPEED);
 		pose = new OdometryPoseProvider(pilot);
@@ -42,7 +43,18 @@ public class MoveManager extends Thread {
 	public static void newWaypoint(int x, int y, float heading) {
 		navi.addWaypoint(x, y, heading);
 	}
-	
+
+	/**
+	 * LED pattern 0: turn off button lights 1/2/3: static light
+	 * green/red/yellow 4/5/6: normal blinking light green/red/yellow 7/8/9:
+	 * fast blinking light green/red/yellow >9: same as 9.
+	 * 
+	 * @param pattern
+	 */
+	private void setLED(int pattern) {
+		LocalEV3.get().getLED().setPattern(pattern);
+	}
+
 	public static void newWaypoint(Position pos) {
 		navi.addWaypoint(pos.getX(), pos.getY(), pos.getHeading());
 	}
@@ -54,9 +66,10 @@ public class MoveManager extends Thread {
 		result[2] = pose.getPose().getHeading();
 		return result;
 	}
-	
+
 	public static Position GetPosition() {
-		Position pos = new Position(pose.getPose().getX(), pose.getPose().getY(), pose.getPose().getHeading());
+		Position pos = new Position(pose.getPose().getX(), pose.getPose()
+				.getY(), pose.getPose().getHeading());
 		return pos;
 	}
 
@@ -67,6 +80,10 @@ public class MoveManager extends Thread {
 
 	public static boolean isMoving() {
 		return navi.isMoving();
+	}
+
+	public static boolean isPathCompleted() {
+		return navi.pathCompleted();
 	}
 
 	@Override
@@ -93,6 +110,9 @@ public class MoveManager extends Thread {
 		if (!navi.pathCompleted()) {
 			navi.followPath();
 			target = navi.getWaypoint();
+            this.setLED(2);
+		}else{
+			 this.setLED(1);
 		}
 	}
 

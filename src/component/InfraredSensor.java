@@ -61,13 +61,11 @@ public class InfraredSensor extends Thread {
 			if (f != 0) {
 
 				if (f <= SHORT_RANGE) {
-					LocalEV3.get().getAudio().systemSound(Sounds.BUZZ);
+					LocalEV3.get().getAudio().systemSound(Sounds.DOUBLE_BEEP);
 					currentRange = Range.SHORT;
 				} else if (f <= MEDIUM_RANGE) {
-					LocalEV3.get().getAudio().systemSound(Sounds.DOUBLE_BEEP);
 					currentRange = Range.MEDIUM;
 				} else if (f <= LONG_RANGE) {
-					LocalEV3.get().getAudio().systemSound(Sounds.BEEP);
 					currentRange = Range.LONG;
 				} else if (f <= Float.POSITIVE_INFINITY) {
 					currentRange = Range.UNKNOWN;

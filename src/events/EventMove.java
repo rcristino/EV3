@@ -45,7 +45,7 @@ public class EventMove extends Event implements IEvent {
 
 	@Override
 	public void execute() {
-		
+		super.execute();
 		switch (this.action) {
 		case MOVE:
 			for (Position pos : posList) {
