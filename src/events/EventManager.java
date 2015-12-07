@@ -8,7 +8,6 @@ public class EventManager extends Thread {
 
 	private static ArrayList<Event> eventQueueList = null;
 	private static ArrayList<Event> eventActiveList = null;
-	private static EventsPublisher eventsPublisher = null;
 
 	public EventManager() {
 		super("EventManager");
@@ -16,7 +15,6 @@ public class EventManager extends Thread {
 		eventActiveList = new ArrayList<Event>();
 		EventStatus evtStatus = new EventStatus(EventStatus.Status.START);
 		EventManager.addEvent(evtStatus);
-		eventsPublisher = new EventsPublisher(evtStatus);
 	}
 
 	@Override
@@ -53,11 +51,11 @@ public class EventManager extends Thread {
 			if (eventActiveList.size() < MAX_ACTIVE_EVENT
 					&& !eventQueueList.isEmpty()) {
 				Event nextEvt = eventQueueList.get(0);
-				if (getEventActive(nextEvt.getType()) == null) {
+				if (nextEvt != null && getEventActive(nextEvt.getType()) == null) {
 					nextEvt.execute();
 					eventActiveList.add(nextEvt);
 					eventQueueList.remove(0);
-					eventsPublisher.publishEvent(nextEvt);
+					PublisherManager.publishEvent(nextEvt);
 				}
 			}
 		}
@@ -65,10 +63,12 @@ public class EventManager extends Thread {
 
 	public static Event getEventActive(Event.Type type) {
 		Event result = null;
-		for (Event evtActive : eventActiveList) {
-			if (evtActive.getType() == type) {
-				result = evtActive;
-				break;
+		synchronized (eventActiveList) {
+			for (Event evtActive : eventActiveList) {
+				if (evtActive.getType() == type) {
+					result = evtActive;
+					break;
+				}
 			}
 		}
 		return result;

@@ -43,10 +43,10 @@ public class Display extends Thread {
 	private void updateDisplay() {
 		DecimalFormat df = new DecimalFormat("#.#");
 		double posX = Double.valueOf(df
-				.format(MoveManager.GetPosition().getX()));
+				.format(MoveManager.getPosition().getX()));
 		double posY = Double.valueOf(df
-				.format(MoveManager.GetPosition().getY()));
-		double posH = Double.valueOf(df.format(MoveManager.GetPosition()
+				.format(MoveManager.getPosition().getY()));
+		double posH = Double.valueOf(df.format(MoveManager.getPosition()
 				.getHeading()));
 
 		EventStatus evtStatus = (EventStatus) EventManager

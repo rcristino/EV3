@@ -52,7 +52,7 @@ public class ColourDetector extends Thread {
 		colourDetector.getColorIDMode().fetchSample(sample, offset);
 		for (float f : sample) {
 			if (f == 6) {
-				LocalEV3.get().getAudio().systemSound(Sounds.BEEP);
+				//LocalEV3.get().getAudio().systemSound(Sounds.BEEP);
 				break;
 			}
 		}

@@ -12,6 +12,7 @@ import component.InfraredSensor;
 import component.Touch;
 
 import events.EventManager;
+import events.PublisherManager;
 
 public class RickRobot {
 
@@ -27,7 +28,7 @@ public class RickRobot {
 	public final static int TRACK_WITH = 100;
 	public final static int PLAY_GROUND_SIZE = 100; /* mm */
 	public final static int NUMBER_PATH_POINTS = 3;
-	public final static int CLOCK = 1000;
+	public final static int CLOCK = 10; /* msecs */
 
 	private static EventManager eventManager;
 	private static Buttons buttonsManager;
@@ -36,12 +37,13 @@ public class RickRobot {
 	private static InfraredSensor infraredManager;
 	private static MoveManager moveManager;
 	private static Display display;
+	private static PublisherManager pubManager;
 
 	private static void startThreads() {
 
 		display = new Display();
 		display.start();
-		
+
 		eventManager = new EventManager();
 		eventManager.start();
 
@@ -59,9 +61,15 @@ public class RickRobot {
 
 		moveManager = new MoveManager();
 		moveManager.start();
+
+		pubManager = new PublisherManager();
+		pubManager.start();
 	}
 
 	public static void processMission() {
+		synchronized (display) {
+			display.notify();
+		}
 		synchronized (eventManager) {
 			eventManager.notify();
 		}
@@ -81,8 +89,8 @@ public class RickRobot {
 		synchronized (moveManager) {
 			moveManager.notify();
 		}
-		synchronized (display) {
-			display.notify();
+		synchronized (pubManager) {
+			pubManager.notify();
 		}
 	}
 

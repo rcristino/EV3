@@ -43,6 +43,11 @@ public class EventMove extends Event implements IEvent {
 		this.action = action;
 	}
 
+	public Position getPosition(){
+		Position result = MoveManager.getPosition();
+		return result;
+	}
+	
 	@Override
 	public void execute() {
 		super.execute();

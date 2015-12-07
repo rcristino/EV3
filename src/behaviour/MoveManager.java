@@ -67,7 +67,7 @@ public class MoveManager extends Thread {
 		return result;
 	}
 
-	public static Position GetPosition() {
+	public static Position getPosition() {
 		Position pos = new Position(pose.getPose().getX(), pose.getPose()
 				.getY(), pose.getPose().getHeading());
 		return pos;
