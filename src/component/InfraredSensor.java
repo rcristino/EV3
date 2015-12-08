@@ -12,13 +12,12 @@ public class InfraredSensor extends Thread {
 	public static enum Range {
 		 UNKNOWN, SHORT, MEDIUM, LONG
 	}
-
+	public final static int SHORT_RANGE = 10;
+	public final static int MEDIUM_RANGE = 25;
+	public final static int LONG_RANGE = 50;
 	
 	private static int NUM_SAMPLES = 10;
 	private static EV3IRSensor irs = null;
-	private static int SHORT_RANGE = 10;
-	private static int MEDIUM_RANGE = 25;
-	private static int LONG_RANGE = 50;
 	private static Range currentRange = Range.UNKNOWN;
 
 	public InfraredSensor() {

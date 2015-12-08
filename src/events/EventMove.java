@@ -23,6 +23,27 @@ public class EventMove extends Event implements IEvent {
 		action = Action.MOVE;
 	}
 
+	public EventMove(float distance) {
+		super(Event.Type.MOVE);
+		action = Action.MOVE;
+		posList = new ArrayList<>();
+		
+		float currentX = getPosition().getX();
+		float currentY = getPosition().getY();
+		float currentH = getPosition().getHeading();
+		float hipo = Float.valueOf(Double.toString(Math.sqrt(Math.pow(currentX,
+				2) + Math.pow(currentY, 2))));
+		float posX = 0;
+		float posY = 0;
+		if (currentX != 0 && currentY != 0) {
+			posX = (distance - currentX) / hipo;
+			posY = (distance - currentY) / hipo;
+		}
+		
+		posList.add(new Position(posX, posY, currentH));
+		action = Action.MOVE;
+	}
+
 	public EventMove() {
 		super(Event.Type.MOVE);
 		posList = new ArrayList<>();
@@ -43,11 +64,11 @@ public class EventMove extends Event implements IEvent {
 		this.action = action;
 	}
 
-	public Position getPosition(){
+	public Position getPosition() {
 		Position result = MoveManager.getPosition();
 		return result;
 	}
-	
+
 	@Override
 	public void execute() {
 		super.execute();

@@ -31,10 +31,12 @@ public class EventDistance extends Event implements IEvent {
 			break;
 		case MEDIUM:
 			EventManager.addEvent(new EventMove(EventMove.Action.STOP));
+			EventManager.addEvent(new EventMove(InfraredSensor.MEDIUM_RANGE));
 			this.setActive(false);
 			break;
 		case LONG:
 			EventManager.addEvent(new EventMove(EventMove.Action.STOP));
+			EventManager.addEvent(new EventMove(InfraredSensor.LONG_RANGE));
 			this.setActive(false);
 			break;
 		default:
@@ -51,7 +53,7 @@ public class EventDistance extends Event implements IEvent {
 
 	@Override
 	public String toString() {
-		return "EventObject [range=" + range + "]";
+		return "EventDistance [range=" + range + "]";
 	}
 
 }

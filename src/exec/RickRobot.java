@@ -26,7 +26,7 @@ public class RickRobot {
 	public final static int TRAVEL_SPEED = 20;
 	public final static int ROTATE_SPEED = 30;
 	public final static int TRACK_WITH = 100;
-	public final static int PLAY_GROUND_SIZE = 100; /* mm */
+	public final static int PLAY_GROUND_SIZE = 500; /* mm */
 	public final static int NUMBER_PATH_POINTS = 3;
 	public final static int CLOCK = 10; /* msecs */
 
