@@ -43,12 +43,14 @@ public class EventManager extends Thread {
 
 	private void processEvents() {
 		synchronized (eventActiveList) {
+			ArrayList<Event> toRemove = new ArrayList<Event>();
 			for (Event evt : eventActiveList) {
 				if (!evt.isActivated()) {
 					performedEvent.put(evt.getType(),evt);
-					eventActiveList.remove(evt);
+					toRemove.add(evt);
 				}
 			}
+			eventActiveList.removeAll(toRemove);
 		}
 		synchronized (eventQueueList) {
 			if (eventActiveList.size() < MAX_ACTIVE_EVENT

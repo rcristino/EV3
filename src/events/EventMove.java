@@ -4,6 +4,7 @@ import java.util.Random;
 
 import behaviour.MoveManager;
 import behaviour.Position;
+import events.EventGrabber.GrabberStatus;
 import exec.RickRobot;
 
 public class EventMove extends Event implements IEvent {
@@ -42,18 +43,19 @@ public class EventMove extends Event implements IEvent {
 		Position result = MoveManager.getPosition();
 		return result;
 	}
-	
-	public Action getAction(){
+
+	public Action getAction() {
 		return this.action;
 	}
-	
-	public boolean isMoving(){
+
+	public boolean isMoving() {
 		return MoveManager.isMoving();
 	}
 
 	@Override
 	public void execute() {
 		super.execute();
+
 		switch (this.action) {
 		case MOVE_RANDOM:
 			MoveManager.resetMove();
@@ -74,7 +76,8 @@ public class EventMove extends Event implements IEvent {
 			break;
 		case MOVE_POSITION:
 			MoveManager.resetMove();
-			MoveManager.newWaypoint(new Position(this.position.getX(), this.position.getY(), this.position.getHeading()));
+			MoveManager.newWaypoint(new Position(this.position.getX(),
+					this.position.getY(), this.position.getHeading()));
 			this.setActive(false);
 			break;
 		case STOP:

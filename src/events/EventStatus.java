@@ -1,5 +1,6 @@
 package events;
 
+import events.EventGrabber.GrabberStatus;
 import lejos.hardware.Sounds;
 import lejos.hardware.ev3.LocalEV3;
 
@@ -36,6 +37,7 @@ public class EventStatus extends Event implements IEvent {
 		case EXIT:
 			LocalEV3.get().getAudio().systemSound(Sounds.DESCENDING);
 			this.setActive(false);
+			
 			int numThreads = Thread.activeCount();
 			Thread[] tarray = new Thread[numThreads];
 			Thread.enumerate(tarray);

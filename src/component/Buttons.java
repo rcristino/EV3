@@ -10,7 +10,7 @@ public class Buttons extends Thread {
 	public Buttons() {
 		super("Buttons");
 	}
-	
+
 	@Override
 	public void run() {
 		boolean isRunning = true;
@@ -32,6 +32,8 @@ public class Buttons extends Thread {
 
 	private void processButtons() {
 		if (Button.ESCAPE.isDown()) {
+			EventManager.addEvent(new EventStatus(
+					EventStatus.Status.GRABER_OPENED));
 			EventStatus evt = new EventStatus(EventStatus.Status.EXIT);
 			EventManager.addEvent(evt);
 		}

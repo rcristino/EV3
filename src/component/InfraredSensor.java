@@ -10,12 +10,13 @@ import exec.RickRobot;
 public class InfraredSensor extends Thread {
 
 	public static enum Range {
-		 UNKNOWN, SHORT, MEDIUM, LONG
+		UNKNOWN, SHORT, MEDIUM, LONG
 	}
+
 	public final static int SHORT_RANGE = 10;
 	public final static int MEDIUM_RANGE = 25;
 	public final static int LONG_RANGE = 50;
-	
+
 	private static int NUM_SAMPLES = 10;
 	private static EV3IRSensor irs = null;
 	private static Range currentRange = Range.UNKNOWN;
@@ -62,14 +63,20 @@ public class InfraredSensor extends Thread {
 			if (f != 0) {
 
 				if (f <= SHORT_RANGE) {
-					currentRange = Range.SHORT;
-					EventManager.addEvent(new EventMove(SHORT_RANGE));
+					if (currentRange != Range.SHORT) {
+						currentRange = Range.SHORT;
+						EventManager.addEvent(new EventMove(SHORT_RANGE * 10));
+					}
 				} else if (f <= MEDIUM_RANGE) {
-					currentRange = Range.MEDIUM;
-					EventManager.addEvent(new EventMove(MEDIUM_RANGE));
+					if (currentRange != Range.MEDIUM) {
+						currentRange = Range.MEDIUM;
+						EventManager.addEvent(new EventMove(MEDIUM_RANGE * 10));
+					}
 				} else if (f <= LONG_RANGE) {
-					currentRange = Range.LONG;
-					EventManager.addEvent(new EventMove(LONG_RANGE));
+					if (currentRange != Range.LONG) {
+						currentRange = Range.LONG;
+						EventManager.addEvent(new EventMove(LONG_RANGE * 10));
+					}
 				} else if (f <= Float.POSITIVE_INFINITY) {
 					currentRange = Range.UNKNOWN;
 				}

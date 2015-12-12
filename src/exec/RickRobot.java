@@ -24,10 +24,10 @@ public class RickRobot {
 	public final static Port MOTOR_GRABBER_PORT = MotorPort.C;
 	public final static double WHEEL_RADIUS = 16; /* mm */
 	public final static int TRAVEL_SPEED = 40;
-	public final static int ROTATE_SPEED = 60;
+	public final static int ROTATE_SPEED = 40;
 	public final static int TRACK_WITH = 120;
 	public final static int PLAY_GROUND_SIZE = 200;
-	public final static int NUMBER_PATH_POINTS = 1;
+	public final static int NUMBER_PATH_POINTS = 5;
 	public final static int CLOCK = 10; /* msecs */
 
 	private static EventManager eventManager;

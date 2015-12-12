@@ -65,7 +65,8 @@ public class MoveManager extends Thread {
 		Double pY = navi.getPoseProvider().getPose().pointAt(distance, 0)
 				.getY();
 		navi.addWaypoint(Float.valueOf(pX.toString()),
-				Float.valueOf(pY.toString()));
+				Float.valueOf(pY.toString()), navi.getPoseProvider().getPose()
+						.getHeading());
 	}
 
 	public static float[] getPoint() {
@@ -100,6 +101,10 @@ public class MoveManager extends Thread {
 
 	public static void resetMove() {
 		navi.clearPath();
+		// TODO there are EventMove in queue which need to discard
+		while (navi.isMoving()) {
+			navi.clearPath();
+		}
 	}
 
 	public static boolean isMoving() {
