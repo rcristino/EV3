@@ -8,25 +8,19 @@ import lejos.robotics.filter.PublishFilter;
 
 public class PublisherManager extends Thread {
 
-	private final static float TRANSMISSION_FREQUENCY_HIGH = 2;
-	private final static float TRANSMISSION_FREQUENCY_LOW = 20;
-	private static Event currentEvent;
+	private final static float TRANSMISSION_FREQUENCY = 20;
 	private PublishFilter publishStatus;
 	private PublishFilter publishMove;
 	private PublishFilter publishGrabber;
-	private PublishFilter publishDistance;
 	private float[] sampleStatus;
 	private float[] sampleMove;
 	private float[] sampleGrabber;
-	private float[] sampleDistance;
 	private EventPublisher evtPubStatus;
 	private EventPublisher evtPubMove;
 	private EventPublisher evtPubGrabber;
-	private EventPublisher evtPubDistance;
 	private boolean isEvtPubStatusInitialised = false;
 	private boolean isEvtPubMoveInitialised = false;
 	private boolean isEvtPubGrabberInitialised = false;
-	private boolean isEvtPubDistanceInitialised = false;
 
 	public PublisherManager() {
 		super("EventsPublisher");
@@ -53,9 +47,8 @@ public class PublisherManager extends Thread {
 
 	private void processPubEvent() {
 		
-		if (currentEvent != null) {
-			Event evt = currentEvent;
-
+		ArrayList<Event> lastEvents = EventManager.getLastEvents();
+		for (Event evt : lastEvents) {
 			try {
 				switch (evt.getType()) {
 				case STATUS:
@@ -64,7 +57,7 @@ public class PublisherManager extends Thread {
 								.name());
 						publishStatus = new PublishFilter(evtPubStatus,
 								evtPubStatus.getName(),
-								TRANSMISSION_FREQUENCY_LOW);
+								TRANSMISSION_FREQUENCY);
 						sampleStatus = new float[publishStatus.sampleSize()];
 						isEvtPubStatusInitialised = true;
 					}
@@ -78,7 +71,7 @@ public class PublisherManager extends Thread {
 								.name());
 						publishMove = new PublishFilter(evtPubMove,
 								evtPubMove.getName(),
-								TRANSMISSION_FREQUENCY_LOW);
+								TRANSMISSION_FREQUENCY);
 						sampleMove = new float[publishMove.sampleSize()];
 						isEvtPubMoveInitialised = true;
 					}
@@ -91,24 +84,11 @@ public class PublisherManager extends Thread {
 								.name());
 						publishGrabber = new PublishFilter(evtPubGrabber,
 								evtPubGrabber.getName(),
-								TRANSMISSION_FREQUENCY_LOW);
+								TRANSMISSION_FREQUENCY);
 						sampleGrabber = new float[publishGrabber.sampleSize()];
 						isEvtPubGrabberInitialised = true;
 					}
 					publishEventGrabber((EventGrabber) evt);
-					break;
-
-				case DISTANCE:
-					if (isEvtPubDistanceInitialised == false) {
-						evtPubDistance = new EventPublisher(evt, evt.getType()
-								.name());
-						publishDistance = new PublishFilter(evtPubDistance,
-								evtPubDistance.getName(),
-								TRANSMISSION_FREQUENCY_LOW);
-						sampleDistance = new float[publishDistance.sampleSize()];
-						isEvtPubDistanceInitialised = true;
-					}
-					publishEventDistance((EventDistance) evt);
 					break;
 
 				default:
@@ -118,12 +98,7 @@ public class PublisherManager extends Thread {
 				e.printStackTrace();
 			}
 		}
-	
-	}
-
-	public static void publishEvent(Event evt) {
-		currentEvent = (evt);
-	}
+		}
 
 	private void publishEventStatus(EventStatus evtStatus) {
 
@@ -149,14 +124,6 @@ public class PublisherManager extends Thread {
 		}
 	}
 
-	private void publishEventDistance(EventDistance evtDistance) {
-
-		if (isEvtPubDistanceInitialised) {
-			evtPubDistance.updateEvent(evtDistance);
-			publishDistance.fetchSample(sampleDistance, 0);
-		}
-	}
-
 	private class EventPublisher implements SensorMode {
 
 		private IEvent evt;
@@ -174,9 +141,6 @@ public class PublisherManager extends Thread {
 				numSample = 3;
 				break;
 			case GRABBER:
-				numSample = 1;
-				break;
-			case DISTANCE:
 				numSample = 1;
 				break;
 			default:
@@ -212,12 +176,6 @@ public class PublisherManager extends Thread {
 				EventGrabber evtGrabber = (EventGrabber) evt;
 				sample[0] = (float) new Float(evtGrabber.getGrabberStatus()
 						.ordinal()).floatValue();
-				break;
-
-			case DISTANCE:
-				EventDistance evtDistance = (EventDistance) evt;
-				sample[0] = (float) new Float(evtDistance.getRange().ordinal())
-						.floatValue();
 				break;
 
 			default:

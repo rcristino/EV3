@@ -1,6 +1,7 @@
 package events;
 
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import behaviour.Position;
 import exec.RickRobot;
 
 public class EventGrabber extends Event implements IEvent {
@@ -36,6 +37,17 @@ public class EventGrabber extends Event implements IEvent {
 	@Override
 	public void execute() {
 		super.execute();
+
+		//TODO to be improved, probably with new Event Kind
+		EventMove evtMove = (EventMove) EventManager
+				.getLastEvent(Event.Type.MOVE);
+		if (evtMove != null
+				&& evtMove.getAction() == EventMove.Action.MOVE_STRAIGHT
+				&& !evtMove.isMoving()) {
+			EventManager.addEvent(new EventGrabber(GrabberStatus.CLOSED));
+			EventManager.addEvent(new EventMove(new Position(0, 0, 0)));
+		}
+
 		switch (this.getGrabberStatus()) {
 		case OPENED:
 			if (currentStatus == GrabberStatus.CLOSED) {

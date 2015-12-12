@@ -12,13 +12,16 @@ import events.EventStatus;
 public class Display extends Thread {
 
 	private static enum Row {
-		BATTERY, VOLTAGE, STATUS, POSITION, RANGE
+		BATTERY, VOLTAGE, STATUS, POSITION, NEXT_POSITION, RANGE
 	}
 
 	private String status = "UNKOWN";
 
 	public Display() {
 		super("Display");
+		LCD.clear();
+		LCD.drawString(" Initialising...", 0, Display.Row.STATUS.ordinal());
+		LCD.refresh();
 	}
 
 	@Override
@@ -48,9 +51,15 @@ public class Display extends Thread {
 				.format(MoveManager.getPosition().getY()));
 		double posH = Double.valueOf(df.format(MoveManager.getPosition()
 				.getHeading()));
+		double posNextX = Double.valueOf(df
+				.format(MoveManager.getDestinationPosition().getX()));
+		double posNextY = Double.valueOf(df
+				.format(MoveManager.getDestinationPosition().getY()));
+		double posNextH = Double.valueOf(df.format(MoveManager.getDestinationPosition()
+				.getHeading()));
 
 		EventStatus evtStatus = (EventStatus) EventManager
-				.getEventActive(Event.Type.STATUS);
+				.getLastEvent(Event.Type.STATUS);
 		if (evtStatus != null) {
 			status = evtStatus.getStatus().name();
 		}
@@ -62,6 +71,7 @@ public class Display extends Thread {
 				+ String.format("%.5g", LocalEV3.get().getPower().getVoltage()));
 		String statusTxt = new String("Status: " + status);
 		String positionTxt = new String(posX + ":" + posY + ":" + posH);
+		String positionNextTxt = new String(posNextX + ":" + posNextY + ":" + posNextH);
 		InfraredSensor.Range range = InfraredSensor.getRage();
 		String rangeTxt = new String("RANGE: ");
 		switch (range) {
@@ -88,6 +98,7 @@ public class Display extends Thread {
 		LCD.drawString(voltageTxt, 0, Display.Row.VOLTAGE.ordinal());
 		LCD.drawString(statusTxt, 0, Display.Row.STATUS.ordinal());
 		LCD.drawString(positionTxt, 0, Display.Row.POSITION.ordinal());
+		LCD.drawString(positionNextTxt, 0, Display.Row.NEXT_POSITION.ordinal());
 		LCD.drawString(rangeTxt, 0, Display.Row.RANGE.ordinal());
 		LCD.refresh();
 

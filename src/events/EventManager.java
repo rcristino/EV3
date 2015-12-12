@@ -1,6 +1,8 @@
 package events;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class EventManager extends Thread {
 
@@ -8,11 +10,13 @@ public class EventManager extends Thread {
 
 	private static ArrayList<Event> eventQueueList = null;
 	private static ArrayList<Event> eventActiveList = null;
+	private static HashMap<Event.Type,Event> performedEvent = null;
 
 	public EventManager() {
 		super("EventManager");
 		eventQueueList = new ArrayList<Event>();
 		eventActiveList = new ArrayList<Event>();
+		performedEvent = new HashMap<Event.Type,Event>();
 		EventStatus evtStatus = new EventStatus(EventStatus.Status.START);
 		EventManager.addEvent(evtStatus);
 	}
@@ -38,14 +42,13 @@ public class EventManager extends Thread {
 	}
 
 	private void processEvents() {
-		ArrayList<Event> evtToRemove = new ArrayList<Event>();
 		synchronized (eventActiveList) {
 			for (Event evt : eventActiveList) {
 				if (!evt.isActivated()) {
-					evtToRemove.add(evt);
+					performedEvent.put(evt.getType(),evt);
+					eventActiveList.remove(evt);
 				}
 			}
-			eventActiveList.removeAll(evtToRemove);
 		}
 		synchronized (eventQueueList) {
 			if (eventActiveList.size() < MAX_ACTIVE_EVENT
@@ -55,7 +58,6 @@ public class EventManager extends Thread {
 					nextEvt.execute();
 					eventActiveList.add(nextEvt);
 					eventQueueList.remove(0);
-					PublisherManager.publishEvent(nextEvt);
 				}
 			}
 		}
@@ -73,12 +75,27 @@ public class EventManager extends Thread {
 		}
 		return result;
 	}
+	
+	public static Event getLastEvent(Event.Type type) {
+		return performedEvent.get(type);
+	}
+	
+	public static ArrayList<Event> getLastEvents() {
+		ArrayList<Event> lastEventsList = new ArrayList<Event>();
+		Collection<Event> col = performedEvent.values();
+		for (Event evt : col) {
+			lastEventsList.add(evt);
+		}
+		return lastEventsList;
+	}
 
 	public static void addEvent(Event evt) {
 		if (eventQueueList == null) {
 			eventQueueList = new ArrayList<>();
 			eventActiveList = new ArrayList<>();
 		}
+		
+		
 		eventQueueList.add(evt);
 	}
 
@@ -91,5 +108,4 @@ public class EventManager extends Thread {
 			}
 		}
 	}
-
 }

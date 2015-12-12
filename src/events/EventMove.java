@@ -1,6 +1,5 @@
 package events;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import behaviour.MoveManager;
@@ -10,53 +9,28 @@ import exec.RickRobot;
 public class EventMove extends Event implements IEvent {
 
 	public static enum Action {
-		STOP, MOVE
+		STOP, MOVE_POSITION, MOVE_RANDOM, MOVE_STRAIGHT
 	}
 
 	private Action action;
-	private ArrayList<Position> posList;
+	private float distance;
+	private Position position;
 
-	public EventMove(Position pos) {
+	public EventMove(Position position) {
 		super(Event.Type.MOVE);
-		posList = new ArrayList<>();
-		posList.add(new Position(pos.getX(), pos.getY(), pos.getHeading()));
-		action = Action.MOVE;
+		action = Action.MOVE_POSITION;
+		this.position = position;
 	}
 
 	public EventMove(float distance) {
 		super(Event.Type.MOVE);
-		action = Action.MOVE;
-		posList = new ArrayList<>();
-		
-		float currentX = getPosition().getX();
-		float currentY = getPosition().getY();
-		float currentH = getPosition().getHeading();
-		float hipo = Float.valueOf(Double.toString(Math.sqrt(Math.pow(currentX,
-				2) + Math.pow(currentY, 2))));
-		float posX = 0;
-		float posY = 0;
-		if (currentX != 0 && currentY != 0) {
-			posX = (distance - currentX) / hipo;
-			posY = (distance - currentY) / hipo;
-		}
-		
-		posList.add(new Position(posX, posY, currentH));
-		action = Action.MOVE;
+		action = Action.MOVE_STRAIGHT;
+		this.distance = distance;
 	}
 
 	public EventMove() {
 		super(Event.Type.MOVE);
-		posList = new ArrayList<>();
-		action = Action.MOVE;
-
-		Random radomGenerator = new Random();
-		for (int i = 0; i < RickRobot.NUMBER_PATH_POINTS; i++) {
-			int x = radomGenerator.nextInt(RickRobot.PLAY_GROUND_SIZE);
-			int y = radomGenerator.nextInt(RickRobot.PLAY_GROUND_SIZE);
-			float heading = radomGenerator.nextInt(360); // max degrees
-			posList.add(new Position(x, y, heading));
-		}
-
+		action = Action.MOVE_RANDOM;
 	}
 
 	public EventMove(Action action) {
@@ -68,15 +42,39 @@ public class EventMove extends Event implements IEvent {
 		Position result = MoveManager.getPosition();
 		return result;
 	}
+	
+	public Action getAction(){
+		return this.action;
+	}
+	
+	public boolean isMoving(){
+		return MoveManager.isMoving();
+	}
 
 	@Override
 	public void execute() {
 		super.execute();
 		switch (this.action) {
-		case MOVE:
-			for (Position pos : posList) {
-				MoveManager.newWaypoint(pos);
+		case MOVE_RANDOM:
+			MoveManager.resetMove();
+			Random radomGenerator = new Random();
+			for (int i = 0; i < RickRobot.NUMBER_PATH_POINTS; i++) {
+				int x = radomGenerator.nextInt(RickRobot.PLAY_GROUND_SIZE);
+				int y = radomGenerator.nextInt(RickRobot.PLAY_GROUND_SIZE);
+				float heading = radomGenerator.nextInt(360); // max degrees
+				position = new Position(x, y, heading);
+				MoveManager.newWaypoint(position);
 			}
+			this.setActive(false);
+			break;
+		case MOVE_STRAIGHT:
+			MoveManager.resetMove();
+			MoveManager.goStraight(distance);
+			this.setActive(false);
+			break;
+		case MOVE_POSITION:
+			MoveManager.resetMove();
+			MoveManager.newWaypoint(new Position(this.position.getX(), this.position.getY(), this.position.getHeading()));
 			this.setActive(false);
 			break;
 		case STOP:

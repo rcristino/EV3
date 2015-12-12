@@ -33,8 +33,8 @@ public class MoveManager extends Thread {
 	}
 
 	/**
-	 * Set the point to pass by as x and y. the initial orientation is 45
-	 * degrees
+	 * Set the point to pass by as x and y. Orientation is zero degrees. x =
+	 * robot heading y = left side from robot heading
 	 * 
 	 * @param x
 	 * @param y
@@ -59,7 +59,16 @@ public class MoveManager extends Thread {
 		navi.addWaypoint(pos.getX(), pos.getY(), pos.getHeading());
 	}
 
-	public static float[] GetPoint() {
+	public static void goStraight(float distance) {
+		Double pX = navi.getPoseProvider().getPose().pointAt(distance, 0)
+				.getX();
+		Double pY = navi.getPoseProvider().getPose().pointAt(distance, 0)
+				.getY();
+		navi.addWaypoint(Float.valueOf(pX.toString()),
+				Float.valueOf(pY.toString()));
+	}
+
+	public static float[] getPoint() {
 		float[] result = new float[3];
 		result[0] = pose.getPose().getX();
 		result[1] = pose.getPose().getY();
@@ -68,13 +77,28 @@ public class MoveManager extends Thread {
 	}
 
 	public static Position getPosition() {
-		Position pos = new Position(pose.getPose().getX(), pose.getPose()
-				.getY(), pose.getPose().getHeading());
+		Position pos = new Position(0, 0, 0);
+		synchronized (navi) {
+			pos = new Position(pose.getPose().getX(), pose.getPose().getY(),
+					pose.getPose().getHeading());
+		}
+		return pos;
+	}
+
+	public static Position getDestinationPosition() {
+		Position pos = new Position(0, 0, 0);
+		synchronized (navi) {
+			if (navi.getWaypoint() != null) {
+				pos = new Position(navi.getWaypoint().getPose().getX(), navi
+						.getWaypoint().getPose().getY(), navi.getWaypoint()
+						.getPose().getHeading());
+			}
+		}
+
 		return pos;
 	}
 
 	public static void resetMove() {
-		navi.stop();
 		navi.clearPath();
 	}
 
@@ -99,7 +123,7 @@ public class MoveManager extends Thread {
 
 				} catch (InterruptedException e) {
 					isRunning = false;
-					navi.stop();
+					navi.clearPath();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -110,9 +134,9 @@ public class MoveManager extends Thread {
 		if (!navi.pathCompleted()) {
 			navi.followPath();
 			target = navi.getWaypoint();
-            this.setLED(2);
-		}else{
-			 this.setLED(1);
+			this.setLED(2);
+		} else {
+			this.setLED(1);
 		}
 	}
 

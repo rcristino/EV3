@@ -4,7 +4,7 @@ import lejos.hardware.Sounds;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.sensor.EV3IRSensor;
 import events.EventManager;
-import events.EventDistance;
+import events.EventMove;
 import exec.RickRobot;
 
 public class InfraredSensor extends Thread {
@@ -62,18 +62,16 @@ public class InfraredSensor extends Thread {
 			if (f != 0) {
 
 				if (f <= SHORT_RANGE) {
-					LocalEV3.get().getAudio().systemSound(Sounds.DOUBLE_BEEP);
 					currentRange = Range.SHORT;
-					EventManager.addEvent(new EventDistance(Range.SHORT));
+					EventManager.addEvent(new EventMove(SHORT_RANGE));
 				} else if (f <= MEDIUM_RANGE) {
 					currentRange = Range.MEDIUM;
-					EventManager.addEvent(new EventDistance(Range.MEDIUM));
+					EventManager.addEvent(new EventMove(MEDIUM_RANGE));
 				} else if (f <= LONG_RANGE) {
 					currentRange = Range.LONG;
-					EventManager.addEvent(new EventDistance(Range.LONG));
+					EventManager.addEvent(new EventMove(LONG_RANGE));
 				} else if (f <= Float.POSITIVE_INFINITY) {
 					currentRange = Range.UNKNOWN;
-					EventManager.addEvent(new EventDistance(Range.UNKNOWN));
 				}
 			}
 		}
